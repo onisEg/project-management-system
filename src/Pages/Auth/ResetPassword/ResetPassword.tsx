@@ -1,10 +1,11 @@
-import { USERS_URL } from "@/service/api.js";
-import { axiosInstance } from "@/service/urls.js";
+import validation from "@/service/validation";
 import toast from "react-hot-toast";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import validation from "@/service/validation";
+import { axiosInstance } from "@/service/urls";
+import { USERS_URL } from "@/service/api";
+import SubmitBtn from "@/components/auth/SubmitBtn";
 
 export default function ResetPassword() {
     const navigate = useNavigate();
@@ -28,10 +29,7 @@ export default function ResetPassword() {
     const onSubmit = async (data: any) => {
         setIsLoading(true);
         try {
-            const response: any = await axiosInstance.post(
-                USERS_URL.RESET,
-                data
-            );
+            const response = await axiosInstance.post(USERS_URL.RESET, data);
 
             toast.success("Password has been reset successfully!");
             navigate("/login", { state: { email: data.email } });
@@ -200,20 +198,10 @@ export default function ResetPassword() {
 
                 {/* Submit */}
                 <div className="d-grid">
-                    <button
-                        type="submit"
-                        className="btn custom-btn btn-lg "
-                        disabled={isLoading}
-                    >
-                        {(isLoading && (
-                            <span
-                                className="spinner-border spinner-border-sm"
-                                role="status"
-                                aria-hidden="true"
-                            ></span>
-                        )) ||
-                            "Reset Password"}
-                    </button>
+                    <SubmitBtn
+                        isSubmitting={isLoading}
+                        title="Reset Password"
+                    />
                 </div>
             </form>
         </>

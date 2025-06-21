@@ -1,19 +1,32 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { Link, useLocation } from "react-router-dom";
 
 export default function SideBar() {
   const location = useLocation();
   const [isCollapse, setIsCollapse] = useState(false);
+
+  const handleCollapse = () => {
+    setIsCollapse(!isCollapse);
+    localStorage.setItem("isCollapse", String(!isCollapse));
+  };
+
+  useEffect(() => {
+    const storedIsCollapse = localStorage.getItem("isCollapse");
+    if (storedIsCollapse !== null) {
+      setIsCollapse(JSON.parse(storedIsCollapse));
+    }
+  }, []);
+
   return (
     <>
       <div className="sidebar-container">
         <div
-          onClick={() => setIsCollapse(!isCollapse)}
+          onClick={() => handleCollapse()}
           className="toggle-arrow"
           style={{
             position: "absolute",
-            top: "20px",
+            top: "30px",
             right: isCollapse ? "-13px" : "-13px",
             background: "#EF9B28",
             borderRadius: "50%",
@@ -59,11 +72,22 @@ export default function SideBar() {
             </MenuItem>
 
             <MenuItem
-              className={location.pathname === "/projects" ? "active-menu" : ""}
+              className={
+                location.pathname === "/projects-manage" ? "active-menu" : ""
+              }
               icon={<i className="fa-solid fa-diagram-project"></i>}
-              component={<Link to="/projects" />}
+              component={<Link to="/projects-manage" />}
             >
               Projects
+            </MenuItem>
+            <MenuItem
+              className={
+                location.pathname === "/projects-system" ? "active-menu" : ""
+              }
+              icon={<i className="fa-solid fa-diagram-project"></i>}
+              component={<Link to="/projects-system" />}
+            >
+              Projects System
             </MenuItem>
 
             <MenuItem

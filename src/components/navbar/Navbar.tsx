@@ -1,30 +1,28 @@
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../store/AuthContext/AuthContext";
-
+import { useAuth } from "@/store/AuthContext/AuthContext";
+import { imgBaseURL } from "@/service/api";
+import { useEffect } from "react";
 
 export default function Navbar() {
-
-    const navigate =useNavigate();
-    const {saveLoginData,loginData}: any = useAuth();
-
+  const navigate = useNavigate();
+  const { saveLoginData, loginData, fullUserData }: any = useAuth();
 
   // =========== LogOut ========
-    const logOut = () =>{
-
-      localStorage.removeItem("token");
-      saveLoginData("");
-      navigate('/login');
-      }
-
-
-   
-
+  const logOut = () => {
+    localStorage.removeItem("token");
+    saveLoginData("");
+    navigate("/login");
+  };
+  // ===========================
+  useEffect(() => {
+    console.log("Login Data in Navbar:", loginData);
+  }, []);
 
   return (
     <>
       <div className="d-flex justify-content-between align-items-center py-3 mx-4 ">
         <div>
-          <img src="/public/navLogo.svg" className="img-fluid " alt="PMS" />
+          <img src="/navLogo.svg" className="img-fluid " alt="PMS" />
         </div>
         <div className="d-flex align-items-center justify-content-evenly gap-4 px-2">
           {/* <!-- Notification icon --> */}
@@ -44,20 +42,29 @@ export default function Navbar() {
           </div>
           <div
             className="border-start mx-2"
-            style={{ height: "30px", borderColor: "#eee", opacity: 0.5 }}
+            style={{
+              height: "30px",
+              borderColor: "#eee",
+              opacity: 0.5,
+            }}
           ></div>
           {/* <!-- User avatar --> */}
-          <div className="d-flex gap-3">
+          <div
+            className="d-flex gap-3 align-items-center "
+            style={{ cursor: "pointer" }}
+            onClick={() => navigate("/profile")}
+          >
             <img
-              src="https://randomuser.me/api/portraits/men/75.jpg"
+              //   src="https://randomuser.me/api/portraits/men/75.jpg"
+              src={`${imgBaseURL}${fullUserData?.imagePath}`}
               alt="user"
               className="rounded-circle"
               width="40"
               height="40"
             />
             <div className="d-flex flex-column">
-              <span>{loginData.userName}</span>
-              <small className="text-muted">{loginData.userEmail}</small>
+              <span>{loginData?.userName}</span> 
+              <small className="text-muted">{loginData?.userEmail}</small>
             </div>
           </div>
 
@@ -73,12 +80,20 @@ export default function Navbar() {
             </button>
             <ul className="dropdown-menu dropdown-menu-end shadow-lg">
               <li>
-                <button className="dropdown-item d-flex align-items-center gap-2 text-secondary" onClick={()=>{navigate('/change-password')}}>
+                <button
+                  className="dropdown-item d-flex align-items-center gap-2 text-secondary"
+                  onClick={() => {
+                    navigate("/change-password");
+                  }}
+                >
                   <i className="bi bi-key "></i> Change Password
                 </button>
               </li>
               <li>
-                <button className="dropdown-item d-flex align-items-center gap-2 text-danger" onClick={logOut}>
+                <button
+                  className="dropdown-item d-flex align-items-center gap-2 text-danger"
+                  onClick={logOut}
+                >
                   <i className="fa-solid fa-right-from-bracket "></i> Logout
                 </button>
               </li>

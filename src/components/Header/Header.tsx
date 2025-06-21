@@ -1,8 +1,12 @@
-
-export default function Header({ title, username, description, headerImg }) {
+export default function Header({
+  title,
+  username,
+  description,
+  headerImg,
+}: any) {
   return (
     <>
-      <div className="header-container d-flex justify-content-between align-items-center p-md-5 mb-4 ">
+      <div className="header-container d-flex justify-content-between align-items-center p-md-5 mb-4 m-4 ">
         <div className="caption text-white ">
           <div className="mb-3 ">
             <span className="h1 ">{title || "Welcome"}</span>
@@ -10,7 +14,7 @@ export default function Header({ title, username, description, headerImg }) {
               {username
                 ? username
                     .replace(/[0-9]/g, "")
-                    .replace(/^\w/, (c) => c.toUpperCase())
+                    .replace(/^\w/, (c: any) => c.toUpperCase())
                 : ""}
             </span>
           </div>

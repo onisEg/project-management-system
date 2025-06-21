@@ -1,33 +1,73 @@
+/* eslint-disable react-refresh/only-export-components */
 import { jwtDecode } from "jwt-decode";
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
+import type {
+  AuthContextType,
+  DecodedTokenPayload,
+} from "../../interfaces/interfaces";
+import { USERS_URL } from "@/service/api";
+import { axiosInstance } from "@/service/urls";
 
-const AuthContext = createContext<any>(null);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export default function AuthProvider({ children }: any) {
-  const [loginData, setLoginData] = useState<any>(null);
+export default function AuthProvider({ children }: { children: ReactNode }) {
+  const [loginData, setLoginData] = useState<DecodedTokenPayload | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [fullUserData, setFullUserData] = useState(null);
 
-  const saveLoginData: any = async () => {
+  const saveLoginData = async () => {
     try {
       const token = localStorage.getItem("token");
       if (token) {
-        const decoded: any = jwtDecode(token);
-        setLoginData(decoded);        
-        console.log(decoded);
+        const decoded = jwtDecode<DecodedTokenPayload>(token);
+        setLoginData(decoded);
       }
     } catch (err) {
       console.error("Invalid token", err);
       localStorage.removeItem("token");
+    } finally {
+      setIsLoading(false); // stop loading whether success or fail
+    }
+  };
+
+  const getCurrentUser = async () => {
+    try {
+      const res = await axiosInstance.get(USERS_URL.GET_CURRENT_USER);
+      setFullUserData(res.data);
+      console.log(res.data);
+    } catch (err) {
+      console.error("Failed to fetch user data", err);
     }
   };
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
       saveLoginData();
+      getCurrentUser();
+    } else {
+      setLoginData(null);
+      setIsLoading(false); // no token, stop loading anyway
     }
   }, []);
 
   return (
-    <AuthContext.Provider value={{ loginData, setLoginData, saveLoginData }}>
+    <AuthContext.Provider
+      value={{
+        loginData,
+        setLoginData,
+        saveLoginData,
+        isLoading,
+        setFullUserData,
+        fullUserData,
+        getCurrentUser,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

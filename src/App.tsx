@@ -15,6 +15,10 @@ import MyProjects from "./Pages/Employee/MyProjects/MyProjects.tsx";
 import MyTasks from "./Pages/Employee/MyTasks/MyTasks.tsx";
 import Users from "./Pages/Manager/users/Users.tsx";
 import { Toaster } from "react-hot-toast";
+import ProtectedRoute from "./components/protectedRoute/ProtectedRoute.tsx";
+import ProjectForm from "./Pages/Manager/Projects/ProjectForm/ProjectForm.tsx";
+import ProjectsSystem from "./Pages/Manager/Projects/ProjectsSystem/ProjectsSystem.tsx";
+import Profile from "./components/profile/Profile.tsx";
 
 function App() {
   const routes = createBrowserRouter([
@@ -29,19 +33,32 @@ function App() {
         { path: "reset-password", element: <ResetPassword /> },
         { path: "forget-password", element: <ForgetPassword /> },
         { path: "change-password", element: <ChangePassword /> },
-        { path: "Verify", element: <VerifyEmail /> },
+        { path: "verify-account", element: <VerifyEmail /> },
       ],
     },
     {
       path: "",
-      element: <MasterLayout />,
+      element: (
+        <ProtectedRoute>
+          <MasterLayout />
+        </ProtectedRoute>
+      ),
       errorElement: <NotFound />,
       children: [
         { index: true, element: <Dashboard /> },
         { path: "dashboard", element: <Dashboard /> },
-        { path: "projects", element: <AllProjects /> },
+
+        // Manager routes
+        { path: "projects-system", element: <ProjectsSystem /> },
+        { path: "projects-manage", element: <AllProjects /> },
+        { path: "projects/add", element: <ProjectForm /> },
+        { path: "projects/edit/:id", element: <ProjectForm /> },
         { path: "tasks", element: <AllTasks /> },
         { path: "users", element: <Users /> },
+
+        { path: "profile", element: <Profile /> },
+
+        // Employee routes
         { path: "my-projects", element: <MyProjects /> },
         { path: "my-tasks", element: <MyTasks /> },
       ],
